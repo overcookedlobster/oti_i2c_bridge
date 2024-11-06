@@ -22,7 +22,6 @@ class wb_master_driver_slave extends uvm_driver#(sequence_item_slave);
 
     // set driver-DUT interface
     virtual i2c_interface vif;
-    virtual top_interface.driver_slave top_vinterface;
     monitor_sequence_item monitor_item;
     wb_master_test_config config_obj;
     function void build_phase (uvm_phase phase);
@@ -30,7 +29,6 @@ class wb_master_driver_slave extends uvm_driver#(sequence_item_slave);
             `uvm_error("", "uvm_config_db::driver.svh get failed on BUILD_PHASE")
         end
         vif = config_obj.i2c_vif.driver;
-        top_vinterface = config_obj.top_vinterface;
         ap = new("ap", this);
     endfunction
 
