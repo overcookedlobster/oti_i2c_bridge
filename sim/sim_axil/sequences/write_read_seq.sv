@@ -19,7 +19,7 @@ class write_read_seq extends uvm_sequence #(axil_seq_item);
 
 		int timeout_count = 0;
 
-        `uvm_info("SEQ", "Starting I2C write/read sequence", UVM_LOW)
+        `uvm_info("SEQ", "Starting I2C write/read sequence", UVM_MEDIUM)
         mem_slave.configure(m_sequencer, slave_addr);
 		api_rw.configure(m_sequencer);
 		
@@ -27,7 +27,7 @@ class write_read_seq extends uvm_sequence #(axil_seq_item);
         
     do begin
         api_rw.read_register_status();
-        `uvm_info("SEQ", $sformatf("Status register: %h", api_rw.rsp.data), UVM_LOW)
+        `uvm_info("SEQ", $sformatf("Status register: %h", api_rw.rsp.data), UVM_HIGH)
         
         // Add timeout check
         timeout_count++;

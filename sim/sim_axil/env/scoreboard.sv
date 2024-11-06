@@ -35,7 +35,7 @@ class scoreboard extends uvm_scoreboard;
                 expected_i2c_queue.push_back(expected);
                 
                 `uvm_info("SCBD", $sformatf("Queued expected I2C write transaction: addr=%h read=%b data=%h", 
-                          expected.addr, expected.read, expected.data), UVM_LOW)
+                          expected.addr, expected.read, expected.data), UVM_MEDIUM)
 			end 
 			// else if ((item.addr == CMD_REG) & item.data[:])
             else if (item.addr == CMD_REG && (item.data[15] == 1'b1)) begin
@@ -46,7 +46,7 @@ class scoreboard extends uvm_scoreboard;
                 expected_i2c_queue.push_back(expected);
                 
                 `uvm_info("SCBD", $sformatf("Queued expected I2C read transaction: addr=%h read=%b", 
-                          expected.addr, expected.read), UVM_LOW)
+                          expected.addr, expected.read), UVM_MEDIUM)
             end
         end
         expected_seq.push_back(item.data);
@@ -54,9 +54,9 @@ class scoreboard extends uvm_scoreboard;
     
     function void report_phase(uvm_phase phase);
         super.report_phase(phase);
-        `uvm_info("SCBD", $sformatf("Total AXI transactions: %0d", expected_seq.size()), UVM_LOW)
+        `uvm_info("SCBD", $sformatf("Total AXI transactions: %0d", expected_seq.size()), UVM_MEDIUM)
         `uvm_info("SCBD", $sformatf("Remaining expected I2C transactions: %0d", 
-                  expected_i2c_queue.size()), UVM_LOW)
+                  expected_i2c_queue.size()), UVM_MEDIUM)
         
         if(expected_i2c_queue.size() != 0) begin
             foreach(expected_i2c_queue[i]) begin
@@ -70,10 +70,10 @@ class scoreboard extends uvm_scoreboard;
         if(expected_i2c_queue.size() > 0) begin
             i2c_trans expected = expected_i2c_queue.pop_front();
             `uvm_info("SCBD", $sformatf("Comparing I2C transaction - Expected: %s, Got: %s",
-                                       expected.convert2string(), item.convert2string()), UVM_LOW)
+                                       expected.convert2string(), item.convert2string()), UVM_MEDIUM)
             
             if(item.nack) begin
-                `uvm_info("SCBD", "I2C NACK received - Transaction failed", UVM_LOW)
+                `uvm_info("SCBD", "I2C NACK received - Transaction failed", UVM_MEDIUM)
                 expected_i2c_queue.push_front(expected);
                 return;
             end
