@@ -19,49 +19,49 @@ class i2c_monitor extends uvm_monitor;
     endfunction
 
     task wait_for_start();
-        @(negedge vif.sda_o iff vif.scl_o === 1);  
+        @(negedge vif.sda_i iff vif.scl_i === 1);  
         `uvm_info("I2C_MON", "START condition detected", UVM_LOW)
     endtask
 
     
     task receive_byte(output bit [7:0] data);
         for(int i = 7; i >= 0; i--) begin
-            @(posedge vif.scl_o);  
-            // Should check both sda_o and sda_i depending on who's driving
-            data[i] = vif.sda_t ? vif.sda_i : vif.sda_o;
+            @(posedge vif.scl_i);  
+            // Should check both sda_i and sda_o depending on who's driving
+            data[i] = vif.sda_t ? vif.sda_o : vif.sda_i;
 
                 `uvm_info("I2C_MON", $sformatf("Bit[%0d]=%b at time %0t", i, data[i], $time), UVM_LOW)
-            wait(!vif.scl_o);
+            wait(!vif.scl_i);
         end
     endtask
     task receive_byte_with_stop(output bit [7:0] data, output bit is_stop);
         is_stop = 0;
         for(int i = 7; i >= 0; i--) begin
-            @(posedge vif.scl_o);  
-            data[i] = vif.sda_o;
+            @(posedge vif.scl_i);  
+            data[i] = vif.sda_i;
 
             // Detect stop condition
-            if ((i == 7) && !vif.sda_o) begin
-                wait(!vif.scl_o || vif.sda_o);
-                if (vif.sda_o) begin
+            if ((i == 7) && !vif.sda_i) begin
+                wait(!vif.scl_i || vif.sda_i);
+                if (vif.sda_i) begin
                     is_stop = 1;
                     `uvm_info("I2C_MON", "Stop condition detected", UVM_LOW)
                     break;
                 end
             end
             
-            wait(!vif.scl_o);
+            wait(!vif.scl_i);
         end
     endtask
 
     task monitor_ack();
-        @(posedge vif.scl_o);
+        @(posedge vif.scl_i);
         // Check based on who's driving (master or slave)
-        if (vif.sda_t ? vif.sda_i : vif.sda_o)
+        if (vif.sda_t ? vif.sda_o : vif.sda_i)
             `uvm_info("I2C_MON", "NACK received", UVM_LOW)
         else
             `uvm_info("I2C_MON", "ACK received", UVM_LOW)
-        wait(!vif.scl_o);
+        wait(!vif.scl_i);
     endtask
 
     task run_phase(uvm_phase phase);

@@ -33,11 +33,11 @@ module axil_tb_top;
 	assign sda_dut_i = sda_dut_o & sda_tb_o;
 	assign sda_tb_i = sda_dut_o & sda_tb_o;
 	
-	// vif is still using the perspective of DUT, so everything is the opposite (see interface modport)
-	assign scl_tb_o = i2c_if.scl_i; 
-	assign sda_tb_o = i2c_if.sda_i;
-	assign i2c_if.scl_o = scl_tb_i;
-	assign i2c_if.sda_o = sda_tb_i;
+	// connect the above logic to the interface
+	assign scl_tb_o = i2c_if.scl_o; 
+	assign sda_tb_o = i2c_if.sda_o;
+	assign i2c_if.scl_i = scl_tb_i;
+	assign i2c_if.sda_i = sda_tb_i;
 
     i2c_master_axil #(
         .DEFAULT_PRESCALE(DEFAULT_PRESCALE),
