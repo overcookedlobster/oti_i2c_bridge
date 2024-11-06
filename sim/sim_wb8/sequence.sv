@@ -336,10 +336,6 @@ class write_i2c_worker extends uvm_sequence #(sequence_item);
     bit [7:0] reg_addr;
     logic [7:0] data [$];  
     int len;
-    // logic   [6:0]   device_addr;
-    // logic   [7:0]   reg_addr;
-    // logic   [7:0]   data [$];
-    // int             len;
     
     function void set_property (logic [6:0] device_addr, logic [7:0] reg_addr, logic [7:0] data [$], int len);
         this.device_addr = device_addr;
@@ -347,12 +343,6 @@ class write_i2c_worker extends uvm_sequence #(sequence_item);
         this.data = data;
         this.len = len;
     endfunction
-    // function set_property (logic [6:0] device_addr, logic [7:0] reg_addr, logic [7:0] data [$], int len);
-    //     this.device_addr = device_addr;
-    //     this.reg_addr = reg_addr;
-    //     this.data = data;
-    //     this.len = len;
-    // endfunction
     
     bit [7:0] WB_DEVICE_ADDR = 3'h2;
     bit [7:0] WB_REG_ADDR = 3'h3;
@@ -403,10 +393,6 @@ class write_i2c_worker extends uvm_sequence #(sequence_item);
 
     // encapsulate set_property and start task
     // not directly implemented in the body task due to input arguments
-    // task write_i2c (bit [6:0] device_addr, bit [7:0] reg_addr, bit [7:0] data [$], int len=1, uvm_sequencer_base seqr);
-    //     this.set_property(device_addr, reg_addr, data, len);
-    //     this.start(seqr);
-    // endtask
 
     task write_i2c (logic [6:0] device_addr, logic [7:0] reg_addr, logic [7:0] data [$], int len=1, uvm_sequencer_base seqr);
         this.set_property(device_addr, reg_addr, data, len);
