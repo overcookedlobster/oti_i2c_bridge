@@ -1,10 +1,9 @@
 /**
  * Top Level DUT's Interface
  */
-interface top_interface;
+interface top_interface(input logic clk);
 
 // Generic signals
-logic        clk;
 logic        rst;
 
 // Host interface
@@ -107,21 +106,19 @@ endinterface
 /**
  * Interfaced Top Level DUT
  */
-module i2c_master_wbs_8_interfaced (top_interface top_if);
+module i2c_master_wbs_8_interfaced (top_interface top_if, i2c_interface i2c_if);
 
-wire sda_i;
-wire dut_sda_o;
-wire scl_i;
-wire dut_scl_o;
+// copied this from the documentation
+assign scl_dut_i = scl_dut_o & scl_tb_o;
+assign scl_tb_i = scl_dut_o & scl_tb_o;
+assign sda_dut_i = sda_dut_o & sda_tb_o;
+assign sda_tb_i = sda_dut_o & sda_tb_o;
 
-// connect scl and sda for inout operation
-assign sda_i = dut_sda_o & top_if.resp_sda_o;
-assign scl_i = dut_scl_o;
-
-assign top_if.i2c_scl_i = scl_i;
-assign top_if.i2c_sda_i = sda_i;
-assign top_if.i2c_scl_o = dut_scl_o;
-assign top_if.i2c_sda_o = dut_sda_o;
+// vif is still using the perspective of DUT, so everything is the opposite (see interface modport)
+assign scl_tb_o = 1'b1; 
+assign sda_tb_o = i2c_if.sda_i;
+assign i2c_if.scl_o = scl_tb_i;
+assign i2c_if.sda_o = sda_tb_i;
 
 // DUT
 i2c_master_wbs_8 DUT(
@@ -139,11 +136,11 @@ i2c_master_wbs_8 DUT(
     .wbs_cyc_i(top_if.wbs_cyc_i),
 
     // I2C interface
-    .i2c_scl_i(scl_i),
-    .i2c_scl_o(dut_scl_o),
+    .i2c_scl_i(scl_dut_i),
+    .i2c_scl_o(scl_dut_o),
     .i2c_scl_t(top_if.i2c_scl_t),
-    .i2c_sda_i(sda_i),
-    .i2c_sda_o(dut_sda_o),
+    .i2c_sda_i(sda_dut_i),
+    .i2c_sda_o(sda_dut_o),
     .i2c_sda_t(top_if.i2c_sda_t)
 );
 endmodule

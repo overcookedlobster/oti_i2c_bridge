@@ -16,6 +16,7 @@ class wb_master_test_config extends uvm_object;
     ***********************/
     // virtual interface
     virtual top_interface top_vinterface;
+    virtual i2c_interface i2c_vif;
     // sequencer variables
     int test_type;
 

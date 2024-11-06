@@ -24,7 +24,7 @@ module axil_tb_top;
         rst = 0;
     end
     
-    i2c_interface  i2c_if(clk, rst);
+    i2c_interface  i2c_if(clk);
     axil_if axil_vif(clk, rst);
 
 	// copied this from the documentation
