@@ -21,14 +21,14 @@ class i2c_responder extends uvm_component;
     
     task monitor_start_condition();
         @(negedge vif.sda_o iff vif.scl_o === 1);  
-        `uvm_info("I2C_RESP", "START condition detected", UVM_LOW)
+        `uvm_info("I2C_RESP", "START condition detected", UVM_MEDIUM)
     endtask
     
     task receive_byte(output bit [7:0] data);
         for(int i = 7; i >= 0; i--) begin
             @(posedge vif.scl_o);  
             data[i] = vif.sda_o;
-            `uvm_info("HAHAHAHAHA PER-NAME", $sformatf("[%t] bit %d = %d", $time, i, data[i]), UVM_NONE)
+            `uvm_info("HAHAHAHAHA PER-NAME", $sformatf("[%t] bit %d = %d", $time, i, data[i]), UVM_HIGH)
 			wait (!vif.scl_o);
         end
     endtask
@@ -44,12 +44,12 @@ class i2c_responder extends uvm_component;
 				wait (!vif.scl_o | vif.sda_o);
 				if (vif.sda_o) begin
 					is_stop = 1;
-            		`uvm_info(get_type_name(), "stop bit detected", UVM_NONE)
+            		`uvm_info(get_type_name(), "stop bit detected", UVM_MEDIUM)
 					break;
 				end
 			end
 
-            `uvm_info(get_type_name(), $sformatf("[%t] bit %d = %d", $time, i, data[i]), UVM_NONE)
+            `uvm_info(get_type_name(), $sformatf("[%t] bit %d = %d", $time, i, data[i]), UVM_HIGH)
 			wait (!vif.scl_o);
         end
     endtask
@@ -64,10 +64,10 @@ class i2c_responder extends uvm_component;
     endtask
 
     task send_byte(bit [7:0] data);
-        `uvm_info("KENTUT", "send byte start", UVM_NONE)
+        `uvm_info("KENTUT", "send byte start", UVM_HIGH)
         for(int i = 7; i >= 0; i--) begin
             vif.sda_i <= data[i];
-            `uvm_info("KENTUT", $sformatf("[%t] bit %d = %d", $time, i, data[i]), UVM_NONE)
+            `uvm_info("KENTUT", $sformatf("[%t] bit %d = %d", $time, i, data[i]), UVM_HIGH)
             wait (vif.scl_o);
             wait (!vif.scl_o);
         end

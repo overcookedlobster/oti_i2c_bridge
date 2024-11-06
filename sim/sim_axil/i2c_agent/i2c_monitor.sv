@@ -20,7 +20,7 @@ class i2c_monitor extends uvm_monitor;
 
     task wait_for_start();
         @(negedge vif.sda_o iff vif.scl_o === 1);  
-        `uvm_info("I2C_MON", "START condition detected", UVM_LOW)
+        `uvm_info("I2C_MON", "START condition detected", UVM_HIGH)
     endtask
 
     
@@ -30,7 +30,7 @@ class i2c_monitor extends uvm_monitor;
             // Should check both sda_o and sda_i depending on who's driving
             data[i] = vif.sda_t ? vif.sda_i : vif.sda_o;
 
-                `uvm_info("I2C_MON", $sformatf("Bit[%0d]=%b at time %0t", i, data[i], $time), UVM_LOW)
+                `uvm_info("I2C_MON", $sformatf("Bit[%0d]=%b at time %0t", i, data[i], $time), UVM_HIGH)
             wait(!vif.scl_o);
         end
     endtask
@@ -45,7 +45,7 @@ class i2c_monitor extends uvm_monitor;
                 wait(!vif.scl_o || vif.sda_o);
                 if (vif.sda_o) begin
                     is_stop = 1;
-                    `uvm_info("I2C_MON", "Stop condition detected", UVM_LOW)
+                    `uvm_info("I2C_MON", "Stop condition detected", UVM_HIGH)
                     break;
                 end
             end
@@ -58,9 +58,9 @@ class i2c_monitor extends uvm_monitor;
         @(posedge vif.scl_o);
         // Check based on who's driving (master or slave)
         if (vif.sda_t ? vif.sda_i : vif.sda_o)
-            `uvm_info("I2C_MON", "NACK received", UVM_LOW)
+            `uvm_info("I2C_MON", "NACK received", UVM_HIGH)
         else
-            `uvm_info("I2C_MON", "ACK received", UVM_LOW)
+            `uvm_info("I2C_MON", "ACK received", UVM_HIGH)
         wait(!vif.scl_o);
     endtask
 
@@ -78,7 +78,7 @@ class i2c_monitor extends uvm_monitor;
             // Address Phase
             receive_byte(addr_byte);
             `uvm_info("I2C_MON", $sformatf("Address Phase: 0x%02h [%s]", 
-                addr_byte[7:1], addr_byte[0] ? "READ" : "WRITE"), UVM_LOW)
+                addr_byte[7:1], addr_byte[0] ? "READ" : "WRITE"), UVM_HIGH)
             
             monitor_ack();
             
@@ -94,7 +94,7 @@ class i2c_monitor extends uvm_monitor;
                         trans.data = data_byte;
                         `uvm_info("I2C_MON", 
                             $sformatf("Read Data: 0x%02h from addr 0x%02h", 
-                            data_byte, trans.addr), UVM_LOW)
+                            data_byte, trans.addr), UVM_HIGH)
                         monitor_ack();
                         ap.write(trans);
                     end
@@ -106,7 +106,7 @@ class i2c_monitor extends uvm_monitor;
                     trans.data = data_byte;
                     `uvm_info("I2C_MON", 
                         $sformatf("Write Data: 0x%02h to addr 0x%02h", 
-                        data_byte, trans.addr), UVM_LOW)
+                        data_byte, trans.addr), UVM_HIGH)
                     monitor_ack();
                     ap.write(trans);
                     receive_byte_with_stop(data_byte, is_stop);
