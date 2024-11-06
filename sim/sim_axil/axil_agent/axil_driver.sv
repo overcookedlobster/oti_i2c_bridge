@@ -12,7 +12,7 @@ class axil_driver extends uvm_driver #(axil_seq_item);
 
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        if(!uvm_config_db#(virtual axil_if)::get(this, "", "vif", vif)) begin
+        if(!uvm_config_db#(virtual axil_if)::get(this, "", "axil_vif", vif)) begin
             `uvm_fatal("NOVIF", $sformatf("Virtual interface not found for %s", get_full_name()))
         end
     endfunction

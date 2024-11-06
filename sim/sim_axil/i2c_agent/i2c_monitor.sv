@@ -2,7 +2,7 @@
 `define I2C_MONITOR
 
 class i2c_monitor extends uvm_monitor;
-    virtual i2c_if vif;
+    virtual i2c_interface vif;
     uvm_analysis_port #(i2c_trans) ap;
     
     `uvm_component_utils(i2c_monitor)
@@ -14,7 +14,7 @@ class i2c_monitor extends uvm_monitor;
 
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        if(!uvm_config_db#(virtual i2c_if)::get(this, "", "vif", vif))
+        if(!uvm_config_db#(virtual i2c_interface)::get(this, "", "i2c_vif", vif))
             `uvm_fatal("NOVIF", "Virtual interface not found")
     endfunction
 
