@@ -114,11 +114,11 @@ assign scl_tb_i = scl_dut_o & scl_tb_o;
 assign sda_dut_i = sda_dut_o & sda_tb_o;
 assign sda_tb_i = sda_dut_o & sda_tb_o;
 
-// vif is still using the perspective of DUT, so everything is the opposite (see interface modport)
+// connect the above logic to the interface
 assign scl_tb_o = 1'b1; 
-assign sda_tb_o = i2c_if.sda_i;
-assign i2c_if.scl_o = scl_tb_i;
-assign i2c_if.sda_o = sda_tb_i;
+assign sda_tb_o = i2c_if.sda_o;
+assign i2c_if.scl_i = scl_tb_i;
+assign i2c_if.sda_i = sda_tb_i;
 
 // DUT
 i2c_master_wbs_8 DUT(

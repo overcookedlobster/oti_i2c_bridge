@@ -22,7 +22,6 @@ class wb_master_driver_slave extends uvm_driver#(sequence_item_slave);
 
     // set driver-DUT interface
     virtual i2c_interface vif;
-    virtual top_interface.driver_slave top_vinterface;
     monitor_sequence_item monitor_item;
     wb_master_test_config config_obj;
     function void build_phase (uvm_phase phase);
@@ -30,7 +29,6 @@ class wb_master_driver_slave extends uvm_driver#(sequence_item_slave);
             `uvm_error("", "uvm_config_db::driver.svh get failed on BUILD_PHASE")
         end
         vif = config_obj.i2c_vif.driver;
-        top_vinterface = config_obj.top_vinterface;
         ap = new("ap", this);
     endfunction
 
@@ -179,14 +177,14 @@ class wb_master_driver_slave extends uvm_driver#(sequence_item_slave);
             data = 0;                              // data packet (8 bits)
             packet = PACKET_ACK;                            // ack/nack variable (redundant, remove later)
             flip = (resp_state == RESP_READ);      // master/slave operation based on the state
-            vif.sda_i = 1 ^ flip;
+            vif.sda_o = 1 ^ flip;
 			
             fork
                 // THREAD 1 :: check for start bit
                 begin
                     forever begin
-                        @(negedge vif.sda_o);
-                        if (vif.scl_o == 1'b1) begin
+                        @(negedge vif.sda_i);
+                        if (vif.scl_i == 1'b1) begin
                             start = 1;
                         end
                     end
@@ -195,10 +193,10 @@ class wb_master_driver_slave extends uvm_driver#(sequence_item_slave);
                 begin
                     // THREAD 2 :: check for stop bit
                     forever begin
-                        @(posedge vif.sda_o);
-                        if (vif.scl_o == 1'b1) begin
+                        @(posedge vif.sda_i);
+                        if (vif.scl_i == 1'b1) begin
                             stop = 1;
-                            vif.sda_i = 1;
+                            vif.sda_o = 1;
                             break;
                         end
                     end
@@ -208,19 +206,19 @@ class wb_master_driver_slave extends uvm_driver#(sequence_item_slave);
                 begin
                     if (resp_state != RESP_READ) begin
                         for(i=0; i<8+(start && resp_state!=RESP_IDLE); i=i+1) begin
-                            @(posedge vif.scl_o);
-                            data = (data << 1) | vif.sda_o;
+                            @(posedge vif.scl_i);
+                            data = (data << 1) | vif.sda_i;
                         end
                         // set ack bit
-                        @(negedge vif.scl_o);
+                        @(negedge vif.scl_i);
                         #5;
-                        vif.sda_i = 0 ^ flip;
+                        vif.sda_o = 0 ^ flip;
                         // read ack bit
-                        @(posedge vif.scl_o);
+                        @(posedge vif.scl_i);
                         #5;
-                        ack = ~vif.sda_o;
+                        ack = ~vif.sda_i;
                         // wait until transfer finish
-                        @(negedge vif.scl_o);
+                        @(negedge vif.scl_i);
                         // making sure no race condition is happening
                         #5;
                     end
@@ -228,17 +226,17 @@ class wb_master_driver_slave extends uvm_driver#(sequence_item_slave);
                     else begin
                         for(i=0; i<8+(start && resp_state!=RESP_IDLE); i=i+1) begin
                             #5;
-                            vif.sda_i = reg_data[7-i];
-                            @(negedge vif.scl_o);
+                            vif.sda_o = reg_data[7-i];
+                            @(negedge vif.scl_i);
                         end
                         #5;
-                        vif.sda_i = 0 ^ flip;
+                        vif.sda_o = 0 ^ flip;
                         // read ack bit
-                        @(posedge vif.scl_o);
+                        @(posedge vif.scl_i);
                         #5;
-                        ack = ~vif.sda_o;
+                        ack = ~vif.sda_i;
                         // wait until transfer finish
-                        @(negedge vif.scl_o);
+                        @(negedge vif.scl_i);
                         // making sure no race condition is happening
                         #5;
                     end
@@ -246,7 +244,7 @@ class wb_master_driver_slave extends uvm_driver#(sequence_item_slave);
             join_any
             disable fork;
 
-            vif.sda_i = 1;
+            vif.sda_o = 1;
         end
     endtask
 
