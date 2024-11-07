@@ -35,7 +35,7 @@
 `define I2C_RESPONDER
 
 class i2c_responder extends uvm_component;
-    virtual i2c_if vif;
+    virtual i2c_interface vif;
     bit [7:0] memory[bit [7:0]]; // Simple memory model
     bit [6:0] my_address;
     
@@ -48,7 +48,7 @@ class i2c_responder extends uvm_component;
     
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        if(!uvm_config_db#(virtual i2c_if)::get(this, "", "vif", vif))
+        if(!uvm_config_db#(virtual i2c_interface)::get(this, "", "i2c_vif", vif))
             `uvm_fatal("NO_VIF", "Failed to get I2C virtual interface")
     endfunction
     

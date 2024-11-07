@@ -1,7 +1,7 @@
 `ifndef I2C_INTERFACE
 `define I2C_INTERFACE
 
-interface i2c_if(input logic clk, rst);
+interface i2c_interface(input logic clk);
     logic scl_i, scl_o, scl_t;
     logic sda_i, sda_o, sda_t;
 

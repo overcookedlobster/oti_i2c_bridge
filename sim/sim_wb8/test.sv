@@ -47,6 +47,8 @@ class wb_master_test extends uvm_test;
         wb_master_test_config_handler = wb_master_test_config::type_id::create("wb_master_test_config_handler");
         if (!uvm_config_db#(virtual top_interface)::get(this, "", "top_vinterface", wb_master_test_config_handler.top_vinterface))
             `uvm_error("TEST", "Virtual interface cannot be loaded")
+        if (!uvm_config_db#(virtual i2c_interface)::get(this, "", "i2c_vif", wb_master_test_config_handler.i2c_vif))
+            `uvm_error("TEST", "Virtual interface cannot be loaded")
         wb_master_test_config_handler.test_type = 1;
 
         // register configured config object
