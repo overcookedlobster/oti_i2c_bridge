@@ -113,6 +113,8 @@ class i2c_responder extends uvm_component;
         vif.sda_o <= 1;            // Release SDA
     endtask
 
+    // To do: 
+    // - Change to driver_slave sequencer from axil
     // Main run task
     task run_phase(uvm_phase phase);
         bit [7:0] addr_byte;
