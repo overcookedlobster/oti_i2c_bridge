@@ -63,7 +63,7 @@ class axil_i2c_monitor extends uvm_monitor;
 
     // Wait for a START condition on the I2C bus
     task wait_for_start();
-        @(negedge vif.sda_o iff vif.scl_o === 1);  
+        @(negedge vif.sda_i iff vif.scl_i === 1);  
         `uvm_info("I2C_MON", "START condition detected", UVM_HIGH)
     endtask
 
@@ -74,8 +74,8 @@ class axil_i2c_monitor extends uvm_monitor;
             // Should check both sda_i and sda_o depending on who's driving
             data[i] = vif.sda_t ? vif.sda_o : vif.sda_i;
 
-                `uvm_info("I2C_MON", $sformatf("Bit[%0d]=%b at time %0t", i, data[i], $time), UVM_HIGH)
-            wait(!vif.scl_o);
+            `uvm_info("I2C_MON", $sformatf("Bit[%0d]=%b at time %0t", i, data[i], $time), UVM_HIGH)
+            wait(!vif.scl_i);
         end
     endtask
 
@@ -104,11 +104,11 @@ class axil_i2c_monitor extends uvm_monitor;
     task monitor_ack();
         @(posedge vif.scl_i);
         // Check based on who's driving (master or slave)
-        if (vif.sda_t ? vif.sda_i : vif.sda_o)
+        if (vif.sda_t ? vif.sda_o : vif.sda_i)
             `uvm_info("I2C_MON", "NACK received", UVM_HIGH)
         else
             `uvm_info("I2C_MON", "ACK received", UVM_HIGH)
-        wait(!vif.scl_o);
+        wait(!vif.scl_i);
     endtask
 
     // Main monitoring task
