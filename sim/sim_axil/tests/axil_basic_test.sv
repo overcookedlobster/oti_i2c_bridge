@@ -16,7 +16,7 @@ class axil_basic_test extends uvm_test;
     endfunction
 
     task run_phase(uvm_phase phase);
-		int multiplier_number = 5;
+		int multiplier_number = 50;
 
         basic_rd_wr_vseq#(axil_i2c_op_read_seq) read_vseq;
         basic_rd_wr_vseq#(axil_i2c_op_write_seq) write_vseq;
@@ -32,8 +32,6 @@ class axil_basic_test extends uvm_test;
 			env.axil_seqr, env.i2c_agnt.sequencer);
         write_vseq.configure(
 			env.axil_seqr, env.i2c_agnt.sequencer);
-
-		env.scbd.set_report_verbosity_level(UVM_MEDIUM);
 
 		// single read & write
         repeat (multiplier_number) read_vseq.start_single();

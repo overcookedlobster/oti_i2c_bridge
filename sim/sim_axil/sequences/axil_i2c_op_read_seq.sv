@@ -20,9 +20,15 @@ class axil_i2c_op_read_seq extends master_i2c_op_base_seq;
 		// stop
 		api.write_command(slave_addr, CMD_STOP);
 
-		// read register
-		repeat (payload_data_length)
+		// read first data
+		#2000
+		api.read_data_until_valid();
+
+		// read rest of the data
+		repeat (payload_data_length-1) begin
+			#1000
 			api.read_data_until_valid();
+		end
 	endtask
 
     function new(string name = "axil_i2c_op_read_seq");
